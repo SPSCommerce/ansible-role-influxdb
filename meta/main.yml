@@ -2,7 +2,7 @@
 galaxy_info:
   author: optimuspaul
   description: 
-  issue_tracker_url: https://github.com/SPSCommerce/ansible-role-influxdb/issues
+  issue_tracker_url: https://github.com/optimuspaul/ansible-role-influxdb/issues
   license: license (MIT)
   min_ansible_version: 1.2
   platforms:
