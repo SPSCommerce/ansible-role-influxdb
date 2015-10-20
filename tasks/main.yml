@@ -1,0 +1,50 @@
+---
+# tasks file for influxdb
+
+- name: influxdb - download sources
+  get_url: url=http://s3.amazonaws.com/influxdb/influxdb_{{ influxdb_version}}_amd64.deb dest=/var/tmp/influxdb_{{ influxdb_version}}_amd64.deb
+  register: download_influxdb_result
+
+- name: influxdb - install
+  apt: deb=/var/tmp/influxdb_{{ influxdb_version}}_amd64.deb
+  when: download_influxdb_result|changed
+
+- name: change influxdb config
+  template:
+    src: config.toml.j2
+    dest: /opt/influxdb/versions/{{ influxdb_version}}/config.toml
+    owner: influxdb
+    group: influxdb
+  notify: restart influxdb
+
+- name: influxdb - ensure service is enabled and started
+  service: name=influxdb enabled=yes state=started
+
+- name: influxdb - wait for service
+  wait_for: port={{ influxdb_port }} delay=5
+
+- name: influxdb - deploy shards_default.json.j2
+  template: src=shards_default.json.j2 dest=/tmp/
+
+- name: influxdb - create project database
+  shell: curl -X POST "http://127.0.0.1:{{ influxdb_port }}/cluster/database_configs/{{ influxdb_database }}?u=root&p=root" --data-binary @/tmp/shards_default.json.j2
+
+- name: influxdb - create grafana database
+  shell: "curl -X POST 'http://127.0.0.1:{{ influxdb_port }}/cluster/database_configs/grafana?u=root&p=root' -d '{\"name\": \"grafana\"}'"
+
+- name: influxdb - create project user
+  shell: "curl -X POST 'http://127.0.0.1:{{ influxdb_port }}/db/{{ influxdb_database }}/users?u=root&p=root' -d '{\"name\": \"{{ influxdb_user }}\", \"password\": \"{{ influxdb_password }}\"}'"
+
+- name: influxdb - create grafana user
+  shell: "curl -X POST 'http://127.0.0.1:{{ influxdb_port }}/db/grafana/users?u=root&p=root' -d '{\"name\": \"grafana\", \"password\": \"{{ influxdb_grafana_password }}\"}'"
+
+- name: influxdb - change root pw
+  shell: "curl -X POST 'http://127.0.0.1:{{ influxdb_port }}/cluster_admins/root?u=root&p=root' -d '{\"password\": \"{{ influxdb_root_password }}\"}'"
+
+- name: influxdb - install chronograf
+  include: chronograf.yml
+  when: install_chronograf
+
+- name: influxdb - install grafana
+  include: grafana.yml
+  when: install_grafana

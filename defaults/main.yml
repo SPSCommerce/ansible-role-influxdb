@@ -1,0 +1,16 @@
+---
+# defaults file for influxdb
+influxdb_bind_address: "0.0.0.0"
+influxdb_host: "{{ influxdb_bind_address }}"
+influxdb_port: 8086
+influxdb_user: "default_user"
+influxdb_password: "passw0rd"
+influxdb_version: 0.9.4.2
+influxdb_grafana_password: "passw0rd"
+influxdb_root_password: "passw0rd"
+
+chronograf_version: "0.2.0"
+install_chronograf: false
+
+grafana_version: "2.1.3"
+install_grafana: true

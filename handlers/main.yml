@@ -1,0 +1,8 @@
+---
+# handlers file for influxdb-src
+
+- name: restart influxdb
+  service: name=influxdb state=restarted
+
+- name: restart chronograf
+  service: name=chronograf state=restarted

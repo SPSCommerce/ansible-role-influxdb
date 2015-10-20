@@ -1,0 +1,19 @@
+---
+# tasks file for grafana
+
+- name: grafana - dependencies
+  apt: name={{item}} state=latest
+  with_items:
+    - adduser
+    - libfontconfig
+
+- name: grafana - download sources
+  get_url: url=https://grafanarel.s3.amazonaws.com/builds/grafana_{{ grafana_version }}_amd64.deb dest=/var/tmp/grafana_{{ grafana_version}}_amd64.deb
+  register: download_grafana_result
+
+- name: grafana - install
+  apt: deb=/var/tmp/grafana_{{ grafana_version}}_amd64.deb
+  when: download_grafana_result|changed
+
+- name: grafana - ensure service is enabled and started
+  service: name=grafana-server enabled=yes state=started

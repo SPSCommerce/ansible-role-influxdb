@@ -1,0 +1,16 @@
+---
+# tasks file for chronograf
+
+- name: chronograf - download sources
+  get_url: url=https://s3.amazonaws.com/get.influxdb.org/chronograf/chronograf_{{ chronograf_version }}_amd64.deb dest=/var/tmp/chronograf_{{ chronograf_version}}_amd64.deb
+  register: download_chronograf_result
+
+- name: chronograf - install
+  apt: deb=/var/tmp/chronograf_{{ chronograf_version}}_amd64.deb
+  when: download_chronograf_result|changed
+
+- name: chronograf - ensure service is enabled and started
+  service: name=chronograf enabled=yes state=started
+
+# - name: influxdb - wait for service
+#   wait_for: port={{ chronograf_port }} delay=5
