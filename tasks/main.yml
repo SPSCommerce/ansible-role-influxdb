@@ -31,12 +31,14 @@
 
 - name: influxdb - create grafana database
   shell: "curl -X POST 'http://127.0.0.1:{{ influxdb_port }}/cluster/database_configs/grafana?u=root&p=root' -d '{\"name\": \"grafana\"}'"
+  when: install_grafana
 
 - name: influxdb - create project user
   shell: "curl -X POST 'http://127.0.0.1:{{ influxdb_port }}/db/{{ influxdb_database }}/users?u=root&p=root' -d '{\"name\": \"{{ influxdb_user }}\", \"password\": \"{{ influxdb_password }}\"}'"
 
 - name: influxdb - create grafana user
   shell: "curl -X POST 'http://127.0.0.1:{{ influxdb_port }}/db/grafana/users?u=root&p=root' -d '{\"name\": \"grafana\", \"password\": \"{{ influxdb_grafana_password }}\"}'"
+  when: install_grafana
 
 - name: influxdb - change root pw
   shell: "curl -X POST 'http://127.0.0.1:{{ influxdb_port }}/cluster_admins/root?u=root&p=root' -d '{\"password\": \"{{ influxdb_root_password }}\"}'"
