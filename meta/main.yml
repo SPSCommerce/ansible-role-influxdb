@@ -1,16 +1,15 @@
----
-galaxy_info:
-  author: optimuspaul
-  description: 
-  issue_tracker_url: https://github.com/optimuspaul/ansible-role-influxdb/issues
-  license: license (MIT)
-  min_ansible_version: 1.2
-  platforms:
-  - name: Ubuntu
-   versions:
-   - trusty
-  categories:
-  - database
-  - database:nosql
+--- 
 dependencies: []
-  
+galaxy_info: 
+  author: optimuspaul
+  categories: 
+    - database
+    - "database:nosql"
+  issue_tracker_url: "https://github.com/optimuspaul/ansible-role-influxdb/issues"
+  license: MIT
+  min_ansible_version: "1.4"
+  platforms: 
+    - 
+      name: Ubuntu
+      versions: 
+        - trusty
